@@ -1,1 +1,300 @@
+============================================（0）global_used================================================================
+编译单元
+CompUnit(开始符号) → [ CompUnit ] ( Decl | FuncDef )
+
+全局变量和局部变量的作用域可以重叠，重叠部分局部变量优先；同名局部变量的作用域不能重叠；局部变量的作用域不能重叠；
+SysY语言中变量名可以与函数名相同语言中变量名可以与函数名相同。
+
+SysY语言中注释的规范 与 C语言一致 
+单行注释 以序列 ‘//’ 开始 直到换行符结束 不包括换行符 。
+多行注释 以序列 ‘/*’ 开始 直到第一次出现 ‘*/’ 时结束 包括结束处‘*/’。
+
+#define indent indetifier
+identifier:
+	identifier-nondigit
+	identifier identifier-nondigit
+	identifier digit
+identifier-nondigit:
+	nondigit
+	universal-character-name
+	other implementation-defined characters
+nondigit: one of
+	\_abcdefghijklm
+	nopqrstuvwxyz
+	ABCDEFGHIJKLM
+	NOPQRSTUVWXYZ
+digit: one of
+	0123456789
+
+constant:
+	integer-constant
+	floating-constant
+
+SysY语言中数值常量可以是整型数 IntConst 也可以是浮点型数 floatingConst。
+整型数 IntConst的 规范如下 integer-constant
+
+integer-constant:
+	decimal-constant integer-suffixopt
+	octal-constant integer-suffixopt
+	hexadecimal-constant integer-suffixopt
+decimal-constant:
+	nonzero-digit
+	decimal-constant digit
+octal-constant:
+	0
+	octal-constant octal-digit
+hexadecimal-constant:
+	hexadecimal-prefix hexadecimal-digit
+	hexadecimal-constant hexadecimal-digit
+	hexadecimal-prefix: one of
+	0x 0X
+nonzero-digit: one of
+	123456789
+octal-digit: one of
+	01234567
+hexadecimal-digit: one of
+  0123456789
+  abcdef  
+  ABCDEF
+integer-suffix:
+  unsigned-suffix long-suffixopt
+  unsigned-suffix long-long-suffix
+  long-suffix unsigned-suffixopt
+  long-long-suffix unsigned-suffixopt
+unsigned-suffix: one of
+  u U
+long-suffix: one of
+  l L
+long-long-suffix: one
+  ll LL
+
+浮点型数 floatConst的 规范如下 floating-constant
+floating-constant:
+  decimal-floating-constant
+  hexadecimal-floating-constant
+decimal-floating-constant:
+  fractional-constant exponent-partopt floating-suffixopt
+  digit-sequence exponent-part floating-suffixopt
+hexadecimal-floating-constant:
+  hexadecimal-prefix hexadecimal-fractional-constant
+    binary-exponent-part floating-suffixopt
+  hexadecimal-prefix hexadecimal-digit-sequence
+    binary-exponent-part floating-suffixopt
+fractional-constant:
+  digit-sequenceopt . digit-sequence
+  digit-sequence .
+exponent-part:
+  e signopt digit-sequence
+  E signopt digit-sequence
+sign: one of
+  + -
+digit-sequence:
+  digit
+  digit-sequence digit
+hexadecimal-fractional-constant:
+  hexadecimal-digit-sequenceopt .
+    hexadecimal-digit-sequence
+  hexadecimal-digit-sequence .
+binary-exponent-part:
+  p signopt digit-sequence
+  P signopt digit-sequence
+hexadecimal-digit-sequence:
+  hexadecimal-digit
+  hexadecimal-digit-sequence hexadecimal-digit
+floating-suffix: one of
+  f l F L
+
+============================================（1）函数，语句块================================================================
+函数定义
+FuncDef → FuncType Ident '(' [FuncFParams] ')' Block
+函数类型
+FuncType → 'void' | 'int' | 'float'
+语句块
+Block → '{' { BlockItem } '}'
+语句块项
+BlockItem → Decl | Stmt
+函数形参表
+FuncFParams → FuncFParam { ',' FuncFParam }
+函数形参
+FuncFParam → BType Ident ['[' ']' { '[' Exp ']' }]
+
+======================================	（2）语句：赋值（=）、表达式语句、语句块、if、while、return==============================================================
+语句
+Stmt → LVal '=' Exp ';' | [Exp] ';' | Block
+| 'if' '( Cond ')' Stmt [ 'else' Stmt ]
+| 'while' '(' Cond ')' Stmt
+| 'break' ';' | 'continue' ';'
+| 'return' [Exp] ';'
+表达式
+Exp → AddExp 注： SysY表达式是 int/float型
+
+============（3）变量声明、常量声明，常量、变量的初始化,数组（一维、二维、…）的声明和数组元素访问============================================================
+声明
+Decl → ConstDecl | VarDecl
+常量声明
+ConstDecl → 'const' BType ConstDef { ',' ConstDef } ';'
+基本类型
+BType → 'int' | 'float'
+常数定义
+ConstDef → Ident { '[' ConstExp ']' } '=' ConstInitVal
+常量初值 
+ConstInitVal → ConstExp
+| '{' [ ConstInitVal { ',' ConstInitVal } ] '}'
+变量声明 
+VarDecl → BType VarDef { ',' VarDef } ';'
+变量定义
+VarDef → Ident { '[' ConstExp ']' }
+| Ident { '[' ConstExp ']' } '=' InitVal
+变量初值
+InitVal → Exp | '{' [ InitVal { ',' InitVal } ] '}'
+
+
+==========（4）	表达式：算术运算（+、-、*、/、%，其中+、-都可以是单目运算符）、关系运算（==，>，<，>=，<=，!=）和逻辑运算（&&（与）、||（或）、!（非））=======
+条件表达式
+Cond → LOrExp
+逻辑或表达式
+LOrExp → LAndExp | LOrExp '||' LAndExp
+逻辑与表达式
+LAndExp → EqExp | LAndExp '&&' EqExp
+相等性表达式
+EqExp → RelExp | EqExp ('==' | '!=') RelExp
+关系表达式
+RelExp → AddExp | RelExp ('<' | '>' | '<=' | '>=') AddExp
+加减表达式 
+AddExp → MulExp | AddExp ('+' | '−') MulExp
+乘除模
+表达式 MulExp → UnaryExp | MulExp ('*' | '/' | '%') UnaryEx
+一元表达式
+UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExpp
+单目运算符
+UnaryOp → '+' | '−' | '!' 注 ：：'!'仅出现在 条件表达式中
+基本表达式
+PrimaryExp → '(' Exp ')' | LVal | Number
+左值表达式
+LVal → Ident {'[' Exp ']'}
+数值
+Number → IntConst | floatConst
+常量表达式
+ConstExp → AddExp 注：使用的 Ident必须是常量
+
+
+
+
+
+
+
+
+===============================================================================================================================================================
+
+
+Identifiers
+--------------------------------(indentifiers)--------------------------------------------
+identifier:
+	identifier-nondigit
+	identifier identifier-nondigit
+	identifier digit
+identifier-nondigit:
+	nondigit
+	universal-character-name
+	other implementation-defined characters
+nondigit: one of
+	\_abcdefghijklm
+	nopqrstuvwxyz
+	ABCDEFGHIJKLM
+	NOPQRSTUVWXYZ
+digit: one of
+	0123456789
+------------------------------------(const_int)-------------------------------------------
+constant:
+	integer-constant
+	floating-constant
+
+integer-constant:
+	decimal-constant integer-suffixopt
+	octal-constant integer-suffixopt
+	hexadecimal-constant integer-suffixopt
+decimal-constant:
+	nonzero-digit
+	decimal-constant digit
+octal-constant:
+	0
+	octal-constant octal-digit
+hexadecimal-constant:
+	hexadecimal-prefix hexadecimal-digit
+	hexadecimal-constant hexadecimal-digit
+	hexadecimal-prefix: one of
+	0x 0X
+nonzero-digit: one of
+	123456789
+octal-digit: one of
+	01234567
+hexadecimal-digit: one of
+  0123456789
+  abcdef  
+  ABCDEF
+integer-suffix:
+  unsigned-suffix long-suffixopt
+  unsigned-suffix long-long-suffix
+  long-suffix unsigned-suffixopt
+  long-long-suffix unsigned-suffixopt
+unsigned-suffix: one of
+  u U
+long-suffix: one of
+  l L
+long-long-suffix: one
+  ll LL
+----------------------------------(const_float)-------------------------------------------
+floating-constant:
+  decimal-floating-constant
+  hexadecimal-floating-constant
+decimal-floating-constant:
+  fractional-constant exponent-partopt floating-suffixopt
+  digit-sequence exponent-part floating-suffixopt
+hexadecimal-floating-constant:
+  hexadecimal-prefix hexadecimal-fractional-constant
+    binary-exponent-part floating-suffixopt
+  hexadecimal-prefix hexadecimal-digit-sequence
+    binary-exponent-part floating-suffixopt
+fractional-constant:
+  digit-sequenceopt . digit-sequence
+  digit-sequence .
+exponent-part:
+  e signopt digit-sequence
+  E signopt digit-sequence
+sign: one of
+  + -
+digit-sequence:
+  digit
+  digit-sequence digit
+hexadecimal-fractional-constant:
+  hexadecimal-digit-sequenceopt .
+    hexadecimal-digit-sequence
+  hexadecimal-digit-sequence .
+binary-exponent-part:
+  p signopt digit-sequence
+  P signopt digit-sequence
+hexadecimal-digit-sequence:
+  hexadecimal-digit
+  hexadecimal-digit-sequence hexadecimal-digit
+floating-suffix: one of
+  f l F L
+------------------------------------(punctuator)------------------------------------------
+punctuator: one of
+  [ ] ( ) { } . ->
+  ++ -- & * + - ~ !
+  / % << >> < > <= >= == != ^ | && ||  
+  ? : ; ...  
+  = *= /= %= += -= <<= >>= &= ^= |=
+  , # ##
+  <: :> <% %> %: %:%:
+
+
+
+
+
+
+
+
+
+
 
