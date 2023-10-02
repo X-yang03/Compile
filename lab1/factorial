@@ -1,0 +1,25 @@
+// 导入标准库中的输出函数
+#include <stdio.h>
+
+// 计算阶乘的函数
+int factorial(int n) {
+    if (n <= 0) {
+        return 1;
+    } else {
+        return n * factorial(n - 1);
+    }
+}
+
+int main() {
+    int num;
+    
+    // 从用户输入中获取整数
+    printf("请输入一个整数：");
+    scanf("%d", &num);
+    
+    // 调用阶乘函数并输出结果
+    int result = factorial(num);
+    printf("%d 的阶乘是 %d\n", num, result);
+    
+    return 0;
+}
