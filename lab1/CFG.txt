@@ -163,9 +163,9 @@ RelExp → AddExp | RelExp ('<' | '>' | '<=' | '>=') AddExp
 加减表达式 
 AddExp → MulExp | AddExp ('+' | '−') MulExp
 乘除模
-表达式 MulExp → UnaryExp | MulExp ('*' | '/' | '%') UnaryEx
+表达式 MulExp → UnaryExp | MulExp ('*' | '/' | '%') UnaryExp
 一元表达式
-UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExpp
+UnaryExp → PrimaryExp | Ident '(' [FuncRParams] ')' | UnaryOp UnaryExp
 单目运算符
 UnaryOp → '+' | '−' | '!' 注 ：：'!'仅出现在 条件表达式中
 基本表达式
