@@ -1,4 +1,8 @@
 %{
+/*********************************************
+common
+YACC file
+**********************************************/
 #include<stdio.h>
 #include<stdlib.h>
 #ifndef YYSTYPE
