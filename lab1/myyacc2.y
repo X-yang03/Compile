@@ -1,4 +1,8 @@
 %{
+/*********************************************
+修改yacc程序，实现中缀表达式到后缀表达式的转换
+YACC file
+**********************************************/
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -14,6 +18,7 @@ FILE* yyin;
 void yyerror(const char* s);
 %}
 
+//TODO:给每个符号定义一个单词类别
 %token ADD SUB MUL DIV LB RB
 %token NUMBER
 %token ID
@@ -26,6 +31,7 @@ lines : lines expr ';' { printf("result: %s\n" , $2);}
       | lines ';'
       |
       ;
+//TODO:完善表达式的规则
 expr  : expr ADD expr { $$ = (char *)malloc(50*sizeof(char)); strcpy($$,$1); strcat($$,$3); strcat($$,"+ "); }
       | expr SUB expr { $$ = (char *)malloc(50*sizeof(char)); strcpy($$,$1); strcat($$,$3); strcat($$,"- "); }
       | expr MUL expr { $$ = (char *)malloc(50*sizeof(char)); strcpy($$,$1); strcat($$,$3); strcat($$,"* "); }
@@ -38,9 +44,10 @@ expr  : expr ADD expr { $$ = (char *)malloc(50*sizeof(char)); strcpy($$,$1); str
 %%
 
 // programs section
+
 int yylex()
 {
-    char t;
+    	char t;
 	while(1){
 		t = getchar();
 		if(t==' ' || t =='\t'|| t == '\n'){
