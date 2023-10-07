@@ -30,9 +30,9 @@ main:
 
     ldr r5, _bridge 
     ldr r5, [r5]@r5 = n
-
+ 
     mov r2, #0  @ a = 0
-    mov r3, #1  @ b = 1
+    mov r6, #1  @ b = 1
     mov r4, #1  @ i = 1
 
     @print a b 
@@ -40,22 +40,22 @@ main:
     ldr r0,_bridge+12
     bl printf
 
-    mov r1,r3
+    mov r1,r6
     ldr r0,_bridge+12
     bl printf
 
 loop:
     cmp r4,r5
     beq loop_end
-    mov r6,r3 @t=b
-    add r3,r3,r2 @b=a+b
+    mov r7,r6 @t=b
+    add r6,r6,r2 @b=a+b
 
     @print b
-    mov r1,r3
+    mov r1,r6
     ldr r0,_bridge+12
     bl printf
 
-    mov r2,r6 @a=t
+    mov r2,r7 @a=t
     add r4,r4,#1 @i=i+1
     b loop
 
