@@ -1,6 +1,6 @@
-.PHONY:test,clean,work,expr,gcc
+.PHONY:test,clean,work,expr,gcc,fibonacci
 test:
-	arm-linux-gnueabihf-gcc factorical.S -o example.out
+	arm-linux-gnueabihf-gcc factorial.S -o example.out
 	qemu-arm -L /usr/arm-linux-gnueabihf ./example.out
 clean:
 	rm -fr example.out
@@ -12,3 +12,7 @@ expr:
 
 gcc:
 	gcc y.tab.c -o compute_expr
+
+fibonacci:
+	arm-linux-gnueabihf-gcc fibonacci.S -o example.out
+	qemu-arm -L /usr/arm-linux-gnueabihf ./example.out
